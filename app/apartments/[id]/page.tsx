@@ -23,6 +23,9 @@ export default function ApartmentEditPage() {
 
   const [form, setForm] = useState<ApartmentInput>({ title: '' });
   const [realId, setRealId] = useState<string | null>(isNew ? null : id);
+  // A card that lives only in the PMS (not yet in our DB) has no real DB row —
+  // saving it must CREATE one, not PUT to a non-existent id.
+  const [fromPms, setFromPms] = useState(false);
   const [photos, setPhotos] = useState<string[]>([]);
   const [loading, setLoading] = useState(!isNew);
   const [busy, setBusy] = useState(false);
@@ -43,8 +46,14 @@ export default function ApartmentEditPage() {
           wifiName: a.wifi_name ?? undefined,
           wifiPassword: a.wifi_password ?? undefined,
           extra: a.extra ?? undefined,
-          rcApartmentId: a.rc_apartment_id ?? undefined,
+          rcApartmentId: a.rc_apartment_id ?? (a.from_pms ? a.id : undefined),
         });
+        // A PMS-sourced card isn't persisted yet: mark it and drop realId so the
+        // photo uploader stays hidden until it's saved (which creates the DB row).
+        if (a.from_pms) {
+          setFromPms(true);
+          setRealId(null);
+        }
         setPhotos(photos);
       })
       .catch((e) => setErr(e.message))
@@ -61,11 +70,13 @@ export default function ApartmentEditPage() {
     setBusy(true);
     setErr('');
     try {
-      if (isNew && !realId) {
+      if (realId) {
+        await updateApartment(token, realId, form);
+      } else {
+        // New card, or a PMS card being persisted for the first time.
         const a = await createApartment(token, form);
         setRealId(a.id);
-      } else if (realId) {
-        await updateApartment(token, realId, form);
+        setFromPms(false);
       }
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
@@ -108,6 +119,15 @@ export default function ApartmentEditPage() {
         </h1>
         <p className="subtitle">Эти данные бот использует в переписке с гостями</p>
       </div>
+
+      {fromPms && (
+        <div className="card mb-4" style={{ background: 'var(--accent-quiet)', borderColor: 'var(--accent-border)', padding: '12px 16px' }}>
+          <p style={{ fontSize: '0.88rem', color: 'var(--accent-hover)', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Icon name="sparkle" size={16} />
+            Квартира подтянута из PMS. Заполните правила, заселение и Wi‑Fi и нажмите «Сохранить» — она добавится в базу, и появится загрузка фото.
+          </p>
+        </div>
+      )}
 
       <div className="card">
         <div className="form-group">
@@ -159,8 +179,23 @@ export default function ApartmentEditPage() {
         <div className="form-group">
           <label>Фото</label>
           <div className="form-hint">
-            {realId ? 'Бот отправит их гостю по запросу' : 'Сначала сохраните квартиру, потом добавьте фото'}
+            {realId
+              ? 'Бот отправит их гостю по запросу'
+              : fromPms
+                ? 'Фото из PMS. Сохраните квартиру, чтобы добавлять свои.'
+                : 'Сначала сохраните квартиру, потом добавьте фото'}
           </div>
+          {/* PMS card: show its photos read-only (full URLs, no delete). */}
+          {!realId && fromPms && photos.length > 0 && (
+            <div className="photos-grid mt-2">
+              {photos.map((f) => (
+                <div className="photo-item" key={f}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={photoUrl(id, f)} alt="" />
+                </div>
+              ))}
+            </div>
+          )}
           {realId && (
             <div className="photos-grid mt-2">
               {photos.map((f) => (
@@ -252,7 +287,7 @@ export default function ApartmentEditPage() {
 
         <div className="mt-6">
           <button onClick={save} className="btn btn-primary btn-lg" disabled={busy}>
-            {busy ? 'Сохраняю…' : isNew && !realId ? 'Создать' : 'Сохранить'}
+            {busy ? 'Сохраняю…' : realId ? 'Сохранить' : 'Создать'}
           </button>
         </div>
       </div>
