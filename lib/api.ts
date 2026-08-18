@@ -1,5 +1,4 @@
 // API client for the Progon Pro cabinet.
-// Talks to the AI-manager backend at NEXT_PUBLIC_API_BASE.
 
 const BASE = process.env.NEXT_PUBLIC_API_BASE ?? '/api/v2';
 const API_ORIGIN = BASE.replace(/\/api\/v2\/?$/, '');
@@ -34,6 +33,9 @@ export interface Apartment {
   extra?: string | null;
   rc_apartment_id?: string | null;
   photo_count?: number;
+  preview_photo?: string | null;
+  photos?: string[];
+  from_pms?: boolean;
 }
 
 export interface ApartmentInput {
@@ -46,6 +48,40 @@ export interface ApartmentInput {
   wifiPassword?: string;
   extra?: string;
   rcApartmentId?: string;
+}
+
+export interface CalendarBookingItem {
+  id: string;
+  propertyId: string;
+  roomTypeId?: number;
+  guestName: string;
+  guestPhone?: string;
+  checkIn: string; // YYYY-MM-DD
+  checkOut: string; // YYYY-MM-DD
+  amount?: number;
+  status: string;
+  isPaid?: boolean;
+}
+
+export interface CalendarClosureItem {
+  propertyId: string;
+  checkIn: string;
+  checkOut: string;
+  reason?: string;
+}
+
+export interface CalendarData {
+  from: string;
+  to: string;
+  properties: Array<{
+    id: string;
+    title: string;
+    address?: string;
+    photos: string[];
+    price?: number;
+  }>;
+  bookings: CalendarBookingItem[];
+  closures: CalendarClosureItem[];
 }
 
 export interface PmsTestResult {
@@ -174,9 +210,25 @@ export async function deleteApartment(token: string, id: string): Promise<void> 
   await jsonOrThrow(res);
 }
 
+// --- Calendar ---
+
+export async function getCalendar(
+  token: string,
+  from?: string,
+  to?: string,
+): Promise<CalendarData> {
+  const params = new URLSearchParams();
+  if (from) params.set('from', from);
+  if (to) params.set('to', to);
+  const query = params.toString() ? `?${params.toString()}` : '';
+  const res = await fetch(`${BASE}/calendar${query}`, { headers: auth(token) });
+  return (await jsonOrThrow(res)).calendar;
+}
+
 // --- Photos ---
 
 export function photoUrl(id: string, file: string): string {
+  if (file.startsWith('http')) return file;
   return `${API_ORIGIN}/photos/${id}/${file}`;
 }
 

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useAuth } from '@/lib/auth-context';
 import Link from 'next/link';
@@ -6,12 +6,13 @@ import { usePathname } from 'next/navigation';
 import { type ReactNode } from 'react';
 
 const NAV_ITEMS = [
-  { href: '/dashboard', label: 'Дашборд', icon: '📊' },
-  { href: '/apartments', label: 'Квартиры', icon: '🏠' },
-  { href: '/settings/telegram', label: 'Telegram', icon: '💬', group: 'settings' },
-  { href: '/settings/pms', label: 'PMS', icon: '🔗', group: 'settings' },
-  { href: '/settings/agent', label: 'Агент', icon: '🤖', group: 'settings' },
-  { href: '/settings/profile', label: 'Профиль', icon: '👤', group: 'settings' },
+  { href: '/dashboard', label: 'Р”Р°С€Р±РѕСЂРґ', icon: 'рџ“Љ' },
+  { href: '/calendar', label: 'РљР°Р»РµРЅРґР°СЂСЊ', icon: 'рџ“…' },
+  { href: '/apartments', label: 'РљРІР°СЂС‚РёСЂС‹', icon: 'рџЏ ' },
+  { href: '/settings/telegram', label: 'Telegram', icon: 'рџ’¬', group: 'settings' },
+  { href: '/settings/pms', label: 'PMS', icon: 'рџ”—', group: 'settings' },
+  { href: '/settings/agent', label: 'РђРіРµРЅС‚', icon: 'рџ¤–', group: 'settings' },
+  { href: '/settings/profile', label: 'РџСЂРѕС„РёР»СЊ', icon: 'рџ‘¤', group: 'settings' },
 ];
 
 export default function AppShell({ children }: { children: ReactNode }) {
@@ -27,7 +28,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
       <aside className="sidebar">
         <div className="sidebar-header">
           <Link href="/dashboard" className="sidebar-logo">
-            <span className="logo-icon">⚡</span>
+            <span className="logo-icon">вљЎ</span>
             <span className="logo-text">Progon Pro</span>
           </Link>
         </div>
@@ -38,7 +39,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`nav-item ${pathname === item.href || pathname.startsWith(item.href + '/') ? 'active' : ''}`}
+                className={`nav-item ${pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href)) ? 'active' : ''}`}
               >
                 <span className="nav-icon">{item.icon}</span>
                 <span className="nav-label">{item.label}</span>
@@ -47,7 +48,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
           </div>
 
           <div className="nav-section">
-            <div className="nav-section-title">Настройки</div>
+            <div className="nav-section-title">РќР°СЃС‚СЂРѕР№РєРё</div>
             {settingsItems.map((item) => (
               <Link
                 key={item.href}
@@ -67,12 +68,12 @@ export default function AppShell({ children }: { children: ReactNode }) {
               {(user?.name?.[0] ?? user?.email?.[0] ?? '?').toUpperCase()}
             </div>
             <div className="user-info">
-              <div className="user-name">{user?.name || user?.email || 'Пользователь'}</div>
+              <div className="user-name">{user?.name || user?.email || 'РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ'}</div>
               <div className="user-email">{user?.email || user?.phone || ''}</div>
             </div>
           </div>
           <button onClick={logout} className="btn btn-ghost btn-sm w-full mt-2">
-            Выйти
+            Р’С‹Р№С‚Рё
           </button>
         </div>
       </aside>
