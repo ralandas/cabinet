@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { getAgentStatus, startAgent, stopAgent, type AgentStatus } from '@/lib/api';
+import { Icon } from '@/components/icon';
 
 export default function AgentSettingsPage() {
   const { token, user, refreshUser } = useAuth();
@@ -60,7 +61,10 @@ export default function AgentSettingsPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1>🤖 ИИ Агент</h1>
+        <h1 style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <Icon name="bot" size={24} style={{ color: 'var(--accent)' }} />
+          ИИ Агент
+        </h1>
         <p className="subtitle">Управляйте ИИ-агентом, который общается с гостями</p>
       </div>
 
@@ -86,11 +90,11 @@ export default function AgentSettingsPage() {
           <div>
             {status?.running ? (
               <button onClick={handleStop} className="btn btn-danger" disabled={busy}>
-                {busy ? <><span className="spinner" /> Останавливаю...</> : '⏹ Остановить'}
+                {busy ? <><span className="spinner" /> Останавливаю...</> : <><Icon name="x" size={16} /> Остановить</>}
               </button>
             ) : (
               <button onClick={handleStart} className="btn btn-success btn-lg" disabled={busy || !ready}>
-                {busy ? <><span className="spinner" /> Запускаю...</> : '▶ Запустить агента'}
+                {busy ? <><span className="spinner" /> Запускаю...</> : <><Icon name="bolt" size={16} /> Запустить агента</>}
               </button>
             )}
           </div>
@@ -103,9 +107,13 @@ export default function AgentSettingsPage() {
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-3">
             {status?.tg_connected ? (
-              <span className="badge badge-success">✓ Telegram</span>
+              <span className="badge badge-success" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                <Icon name="check" size={13} /> Telegram
+              </span>
             ) : (
-              <span className="badge badge-danger">✕ Telegram</span>
+              <span className="badge badge-danger" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                <Icon name="x" size={13} /> Telegram
+              </span>
             )}
             <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
               {status?.tg_connected ? 'Аккаунт подключён' : 'Необходимо подключить Telegram аккаунт'}
@@ -113,9 +121,13 @@ export default function AgentSettingsPage() {
           </div>
           <div className="flex items-center gap-3">
             {status?.pms_connected ? (
-              <span className="badge badge-success">✓ PMS</span>
+              <span className="badge badge-success" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                <Icon name="check" size={13} /> PMS
+              </span>
             ) : (
-              <span className="badge badge-danger">✕ PMS</span>
+              <span className="badge badge-danger" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                <Icon name="x" size={13} /> PMS
+              </span>
             )}
             <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
               {status?.pms_connected ? 'PMS подключена' : 'Необходимо подключить Bnovo или RealtyCalendar'}
@@ -123,8 +135,9 @@ export default function AgentSettingsPage() {
           </div>
         </div>
         {!ready && (
-          <p className="form-hint mt-4" style={{ color: 'var(--warning)' }}>
-            ⚠️ Оба подключения обязательны для запуска агента
+          <p className="form-hint mt-4" style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--warning)' }}>
+            <Icon name="shield" size={15} />
+            Оба подключения обязательны для запуска агента
           </p>
         )}
       </div>
@@ -133,13 +146,20 @@ export default function AgentSettingsPage() {
       <div className="card">
         <h2 className="mb-4">Как работает агент</h2>
         <div className="flex flex-col gap-3" style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-          <p>📨 Принимает сообщения от гостей в Telegram</p>
-          <p>🏠 Ищет доступные квартиры и показывает фото</p>
-          <p>💰 Называет актуальные цены из PMS</p>
-          <p>📋 Автоматически создаёт бронь</p>
-          <p>💳 Отправляет ссылку на оплату</p>
-          <p>⏰ Напоминает об оплате и отменяет неоплаченные</p>
-          <p>🧹 Уведомляет горничных о выездах</p>
+          {[
+            { icon: 'message', text: 'Принимает сообщения от гостей в Telegram' },
+            { icon: 'home', text: 'Ищет доступные квартиры и показывает фото' },
+            { icon: 'bolt', text: 'Называет актуальные цены из PMS' },
+            { icon: 'clipboard', text: 'Автоматически создаёт бронь' },
+            { icon: 'key', text: 'Отправляет ссылку на оплату' },
+            { icon: 'refresh', text: 'Напоминает об оплате и отменяет неоплаченные' },
+            { icon: 'sparkle', text: 'Уведомляет горничных о выездах' },
+          ].map((item) => (
+            <p key={item.text} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <Icon name={item.icon} size={17} style={{ color: 'var(--accent)' }} />
+              {item.text}
+            </p>
+          ))}
         </div>
       </div>
 

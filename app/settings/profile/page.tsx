@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { updateProfile } from '@/lib/api';
+import { Icon } from '@/components/icon';
 
 export default function ProfileSettingsPage() {
   const { user, refreshUser, token, logout } = useAuth();
@@ -36,7 +37,10 @@ export default function ProfileSettingsPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1>👤 Профиль</h1>
+        <h1 style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <Icon name="user" size={24} style={{ color: 'var(--accent)' }} />
+          Профиль
+        </h1>
         <p className="subtitle">Ваши данные и настройки аккаунта</p>
       </div>
 
@@ -85,14 +89,22 @@ export default function ProfileSettingsPage() {
       <div className="divider" />
 
       <div className="card" style={{ borderColor: 'var(--danger-border)' }}>
-        <h3 style={{ color: 'var(--danger)' }}>Опасная зона</h3>
+        <h3 style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--danger)' }}>
+          <Icon name="shield" size={18} />
+          Опасная зона
+        </h3>
         <p className="subtitle mb-4">Выход из аккаунта удалит сохранённый токен на этом устройстве</p>
         <button onClick={logout} className="btn btn-danger">
-          Выйти из аккаунта
+          <Icon name="logout" size={16} /> Выйти из аккаунта
         </button>
       </div>
 
-      {saved && <div className="toast">Сохранено ✓</div>}
+      {saved && (
+        <div className="toast" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <Icon name="check" size={15} style={{ color: 'var(--success)' }} />
+          Сохранено
+        </div>
+      )}
     </div>
   );
 }

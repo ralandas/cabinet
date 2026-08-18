@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import Link from 'next/link';
+import { Icon } from '@/components/icon';
 
 export default function DashboardPage() {
   const { user, refreshUser } = useAuth();
@@ -29,7 +30,7 @@ export default function DashboardPage() {
         : 'Подключите аккаунт, от имени которого агент будет общаться',
       connected: user?.tg_connected ?? false,
       href: '/settings/telegram',
-      icon: '💬',
+      icon: 'message',
     },
     {
       key: 'pms',
@@ -39,7 +40,7 @@ export default function DashboardPage() {
         : 'Подключите Bnovo или RealtyCalendar для работы с бронированиями',
       connected: user?.pms_connected ?? false,
       href: '/settings/pms',
-      icon: '🔗',
+      icon: 'plug',
     },
     {
       key: 'agent',
@@ -52,7 +53,7 @@ export default function DashboardPage() {
       connected: user?.agent_running ?? false,
       ready: (user?.tg_connected && user?.pms_connected) ?? false,
       href: '/settings/agent',
-      icon: '🤖',
+      icon: 'bot',
     },
   ];
 
@@ -62,7 +63,7 @@ export default function DashboardPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1>Добро пожаловать{user?.name ? `, ${user.name}` : ''}! 👋</h1>
+        <h1>Добро пожаловать{user?.name ? `, ${user.name}` : ''}</h1>
         <p className="subtitle">Настройте подключения, чтобы ИИ-агент начал работать</p>
       </div>
 
@@ -70,7 +71,7 @@ export default function DashboardPage() {
       <div className="card mb-6">
         <div className="flex items-center justify-between mb-2">
           <h3>Готовность</h3>
-          <span className="badge badge-info">{completedSteps} из {steps.length}</span>
+          <span className="badge badge-info tnum">{completedSteps} из {steps.length}</span>
         </div>
         <div className="progress-bar">
           <div
@@ -78,10 +79,15 @@ export default function DashboardPage() {
             style={{ width: `${progress}%` }}
           />
         </div>
-        <p className="form-hint mt-2">
-          {progress === 100
-            ? '🎉 Всё настроено! Агент готов к работе.'
-            : 'Выполните все шаги ниже для запуска агента.'}
+        <p className="form-hint mt-2" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          {progress === 100 ? (
+            <>
+              <Icon name="check" size={15} style={{ color: 'var(--success)' }} />
+              Всё настроено — агент готов к работе.
+            </>
+          ) : (
+            'Выполните все шаги ниже для запуска агента.'
+          )}
         </p>
       </div>
 
@@ -90,15 +96,15 @@ export default function DashboardPage() {
         {steps.map((step, i) => (
           <Link key={step.key} href={step.href} style={{ textDecoration: 'none', color: 'inherit' }}>
             <div className="status-card interactive">
-              <div className="step-number">
+              <div className={`step-number ${step.connected ? 'done' : ''}`}>
                 {step.connected ? (
-                  <span className="step-check">✓</span>
+                  <Icon name="check" size={15} />
                 ) : (
                   <span className="step-num">{i + 1}</span>
                 )}
               </div>
-              <div className={`icon ${step.connected ? 'green' : 'key' in step && (step as { ready?: boolean }).ready ? 'yellow' : 'red'}`}>
-                {step.icon}
+              <div className={`icon-tile ${step.connected ? 'green' : 'ready' in step && (step as { ready?: boolean }).ready ? 'yellow' : 'blue'}`}>
+                <Icon name={step.icon} size={20} />
               </div>
               <div className="info">
                 <h3>{step.title}</h3>
@@ -110,10 +116,10 @@ export default function DashboardPage() {
                 ) : 'ready' in step && (step as { ready?: boolean }).ready ? (
                   <span className="badge badge-warning">Готов</span>
                 ) : (
-                  <span className="badge badge-danger">Не подключено</span>
+                  <span className="badge badge-neutral">Не подключено</span>
                 )}
               </div>
-              <span className="nav-arrow">→</span>
+              <span className="nav-arrow"><Icon name="arrow-right" size={18} /></span>
             </div>
           </Link>
         ))}
