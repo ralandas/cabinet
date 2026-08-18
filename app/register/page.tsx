@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import Link from 'next/link';
+import { Icon } from '@/components/icon';
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -35,9 +36,9 @@ export default function RegisterPage() {
     <div className="auth-page">
       <div className="auth-container">
         <div className="auth-header">
-          <div className="auth-logo">
-            <span className="logo-icon">⚡</span>
-            <span className="logo-text">Progon Pro</span>
+          <div className="wordmark auth-logo">
+            <span className="wordmark-mark"><Icon name="bolt" size={20} strokeWidth={2} /></span>
+            <span className="wordmark-text">Progon Pro</span>
           </div>
           <h1>Регистрация</h1>
           <p className="subtitle">Создайте аккаунт и подключите ИИ-агента за 5 минут</p>

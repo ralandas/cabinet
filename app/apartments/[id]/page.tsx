@@ -12,6 +12,7 @@ import {
   photoUrl,
   type ApartmentInput,
 } from '@/lib/api';
+import { Icon } from '@/components/icon';
 
 export default function ApartmentEditPage() {
   const { token } = useAuth();
@@ -97,11 +98,14 @@ export default function ApartmentEditPage() {
   return (
     <div>
       <button onClick={() => router.push('/apartments')} className="btn btn-ghost mb-4">
-        ← К списку
+        <Icon name="chevron-left" size={16} /> К списку
       </button>
 
       <div className="mb-6">
-        <h1>{isNew ? '🏠 Новая квартира' : form.title || 'Квартира'}</h1>
+        <h1 style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          {isNew && <Icon name="home" size={24} style={{ color: 'var(--accent)' }} />}
+          {isNew ? 'Новая квартира' : form.title || 'Квартира'}
+        </h1>
         <p className="subtitle">Эти данные бот использует в переписке с гостями</p>
       </div>
 
@@ -170,13 +174,14 @@ export default function ApartmentEditPage() {
                       if (!token) return;
                       setPhotos(await deletePhoto(token, realId, f));
                     }}
+                    aria-label="Удалить фото"
                   >
-                    ✕
+                    <Icon name="x" size={14} />
                   </button>
                 </div>
               ))}
               <label className="photo-uploader">
-                {uploading ? '…' : '+ Фото'}
+                {uploading ? '…' : <><Icon name="plus" size={18} /> Фото</>}
                 <input
                   type="file"
                   accept="image/*"
@@ -252,7 +257,11 @@ export default function ApartmentEditPage() {
         </div>
       </div>
 
-      {saved && <div className="toast">Сохранено ✓</div>}
+      {saved && (
+        <div className="toast">
+          <Icon name="check" size={16} style={{ color: 'var(--success)' }} /> Сохранено
+        </div>
+      )}
     </div>
   );
 }

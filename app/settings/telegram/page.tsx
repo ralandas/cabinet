@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { connectTelegram, testTelegram, disconnectTelegram } from '@/lib/api';
+import { Icon } from '@/components/icon';
 
 export default function TelegramSettingsPage() {
   const { token, user, refreshUser } = useAuth();
@@ -12,7 +13,7 @@ export default function TelegramSettingsPage() {
   const [proxy, setProxy] = useState('');
   const [username, setUsername] = useState('');
   const [busy, setBusy] = useState(false);
-  const [testResult, setTestResult] = useState<string | null>(null);
+  const [testResult, setTestResult] = useState<{ ok: boolean; msg: string } | null>(null);
   const [err, setErr] = useState('');
 
   const handleTest = async () => {
@@ -27,7 +28,11 @@ export default function TelegramSettingsPage() {
         session,
         proxy: proxy || undefined,
       });
-      setTestResult(result.authorized ? '✅ Сессия активна и авторизована!' : '❌ Сессия не авторизована');
+      setTestResult(
+        result.authorized
+          ? { ok: true, msg: 'Сессия активна и авторизована!' }
+          : { ok: false, msg: 'Сессия не авторизована' }
+      );
     } catch (error) {
       setErr(error instanceof Error ? error.message : 'Ошибка проверки');
     } finally {
@@ -50,7 +55,7 @@ export default function TelegramSettingsPage() {
         polling: true,
       });
       await refreshUser();
-      setTestResult('✅ Telegram успешно подключён!');
+      setTestResult({ ok: true, msg: 'Telegram успешно подключён!' });
     } catch (error) {
       setErr(error instanceof Error ? error.message : 'Ошибка подключения');
     } finally {
@@ -76,7 +81,10 @@ export default function TelegramSettingsPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1>💬 Telegram аккаунт</h1>
+        <h1 style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <Icon name="message" size={24} style={{ color: 'var(--accent)' }} />
+          Telegram аккаунт
+        </h1>
         <p className="subtitle">Подключите личный аккаунт, от имени которого агент общается с гостями</p>
       </div>
 
@@ -172,7 +180,20 @@ export default function TelegramSettingsPage() {
             </div>
           </div>
 
-          {testResult && <div className="form-hint mt-4" style={{ color: testResult.includes('✅') ? 'var(--success)' : 'var(--danger)' }}>{testResult}</div>}
+          {testResult && (
+            <div
+              className="form-hint mt-4"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                color: testResult.ok ? 'var(--success)' : 'var(--danger)',
+              }}
+            >
+              <Icon name={testResult.ok ? 'check' : 'x'} size={15} />
+              {testResult.msg}
+            </div>
+          )}
           {err && <div className="form-error">{err}</div>}
 
           <div className="flex gap-3 mt-6">
@@ -181,14 +202,14 @@ export default function TelegramSettingsPage() {
               className="btn btn-secondary"
               disabled={busy || !apiId || !apiHash || !session}
             >
-              {busy ? <><span className="spinner" /> Проверяю...</> : '🔍 Проверить сессию'}
+              {busy ? <><span className="spinner" /> Проверяю...</> : <><Icon name="search" size={16} /> Проверить сессию</>}
             </button>
             <button
               onClick={handleConnect}
               className="btn btn-primary"
               disabled={busy || !apiId || !apiHash || !session}
             >
-              {busy ? <><span className="spinner" /> Подключаю...</> : '⚡ Подключить'}
+              {busy ? <><span className="spinner" /> Подключаю...</> : <><Icon name="bolt" size={16} /> Подключить</>}
             </button>
           </div>
         </div>

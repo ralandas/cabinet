@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { connectPms, testPms, disconnectPms, type PmsTestResult } from '@/lib/api';
+import { Icon } from '@/components/icon';
 
 type PmsProvider = 'bnovo' | 'realtycalendar' | '';
 
@@ -90,7 +91,10 @@ export default function PmsSettingsPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1>🔗 Подключение PMS</h1>
+        <h1 style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <Icon name="plug" size={24} style={{ color: 'var(--accent)' }} />
+          Подключение PMS
+        </h1>
         <p className="subtitle">Подключите систему управления бронированиями</p>
       </div>
 
@@ -121,7 +125,7 @@ export default function PmsSettingsPage() {
                 className={`pms-option ${provider === 'bnovo' ? 'selected' : ''}`}
                 onClick={() => setProvider('bnovo')}
               >
-                <span className="pms-option-icon">🏨</span>
+                <span className="pms-option-icon"><Icon name="building" size={24} /></span>
                 <span className="pms-option-name">Bnovo</span>
                 <span className="pms-option-desc">online.bnovo.ru</span>
               </button>
@@ -129,7 +133,7 @@ export default function PmsSettingsPage() {
                 className={`pms-option ${provider === 'realtycalendar' ? 'selected' : ''}`}
                 onClick={() => setProvider('realtycalendar')}
               >
-                <span className="pms-option-icon">📅</span>
+                <span className="pms-option-icon"><Icon name="calendar" size={24} /></span>
                 <span className="pms-option-name">RealtyCalendar</span>
                 <span className="pms-option-desc">realtycalendar.ru</span>
               </button>
@@ -273,9 +277,10 @@ export default function PmsSettingsPage() {
     return (
       <>
         {testResult && (
-          <div className="card mt-4" style={{ background: 'var(--success-bg)', border: '1px solid var(--success-border)' }}>
-            <p style={{ color: 'var(--success)', fontWeight: 600 }}>
-              ✅ Найдено объектов: {testResult.properties_count}
+          <div className="card mt-4" style={{ background: 'var(--success-quiet)', border: '1px solid var(--success-border)' }}>
+            <p style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--success)', fontWeight: 600 }}>
+              <Icon name="check" size={16} />
+              Найдено объектов: {testResult.properties_count}
             </p>
             {testResult.properties.length > 0 && (
               <ul style={{ marginTop: 8, paddingLeft: 20, color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
@@ -289,10 +294,10 @@ export default function PmsSettingsPage() {
         {err && <div className="form-error mt-4">{err}</div>}
         <div className="flex gap-3 mt-6">
           <button onClick={handleTest} className="btn btn-secondary" disabled={busy}>
-            {busy ? <><span className="spinner" /> Проверяю...</> : '🔍 Проверить подключение'}
+            {busy ? <><span className="spinner" /> Проверяю...</> : <><Icon name="search" size={16} /> Проверить подключение</>}
           </button>
           <button onClick={handleConnect} className="btn btn-primary" disabled={busy}>
-            {busy ? <><span className="spinner" /> Подключаю...</> : '⚡ Подключить'}
+            {busy ? <><span className="spinner" /> Подключаю...</> : <><Icon name="bolt" size={16} /> Подключить</>}
           </button>
         </div>
       </>

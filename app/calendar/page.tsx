@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { getCalendar, type CalendarData, type CalendarBookingItem, type CalendarClosureItem } from '@/lib/api';
 import Link from 'next/link';
+import { Icon } from '@/components/icon';
 
 export default function CalendarPage() {
   const { token, user } = useAuth();
@@ -102,9 +103,9 @@ export default function CalendarPage() {
   return (
     <div style={{ maxWidth: '100%' }}>
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between gap-4 mb-6" style={{ flexWrap: 'wrap' }}>
         <div>
-          <h1>📅 Календарь занятости (Шахматка)</h1>
+          <h1>Календарь занятости</h1>
           <p className="subtitle">
             {user?.pms_connected
               ? `Синхронизировано в реальном времени с ${user.pms_provider === 'bnovo' ? 'Bnovo' : 'RealtyCalendar'}`
@@ -113,27 +114,27 @@ export default function CalendarPage() {
         </div>
 
         {/* Month switcher */}
-        <div className="flex items-center gap-3">
-          <button onClick={prevMonth} className="btn btn-secondary btn-sm">
-            ←
+        <div className="flex items-center gap-2">
+          <button onClick={prevMonth} className="btn btn-secondary btn-sm" aria-label="Предыдущий месяц">
+            <Icon name="chevron-left" size={16} />
           </button>
-          <span style={{ fontWeight: 700, fontSize: '1.05rem', minWidth: '150px', textAlign: 'center' }}>
+          <span className="tnum" style={{ fontWeight: 700, fontSize: '1rem', minWidth: '150px', textAlign: 'center' }}>
             {monthLabel}
           </span>
-          <button onClick={nextMonth} className="btn btn-secondary btn-sm">
-            →
+          <button onClick={nextMonth} className="btn btn-secondary btn-sm" aria-label="Следующий месяц">
+            <Icon name="chevron-right" size={16} />
           </button>
           <button onClick={goToday} className="btn btn-ghost btn-sm">
             Сегодня
           </button>
-          <button onClick={load} className="btn btn-secondary btn-sm" disabled={loading}>
-            🔄
+          <button onClick={load} className="btn btn-secondary btn-sm" disabled={loading} aria-label="Обновить">
+            <Icon name="refresh" size={16} />
           </button>
         </div>
       </div>
 
       {!user?.pms_connected && (
-        <div className="card mb-6" style={{ background: 'var(--warning-bg)', border: '1px solid var(--warning-border)' }}>
+        <div className="card mb-6" style={{ background: 'var(--warning-quiet)', border: '1px solid var(--warning-border)' }}>
           <h3 style={{ color: 'var(--warning)', marginBottom: 8 }}>PMS не подключена</h3>
           <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: 12 }}>
             Чтобы шахматка заполнялась автоматически всеми бронями и закрытыми датами, подключите Bnovo или RealtyCalendar.
@@ -158,20 +159,20 @@ export default function CalendarPage() {
           <div style={{ overflowX: 'auto', maxWidth: '100%', maxHeight: '75vh', overflowY: 'auto' }}>
             <table style={{ borderCollapse: 'collapse', width: '100%', minWidth: `${daysInMonth.length * 40 + 260}px` }}>
               <thead>
-                <tr style={{ background: 'var(--bg-secondary)', position: 'sticky', top: 0, zIndex: 10 }}>
+                <tr style={{ background: 'var(--bg-surface)', position: 'sticky', top: 0, zIndex: 10 }}>
                   {/* Property Header */}
                   <th
                     style={{
                       position: 'sticky',
                       left: 0,
                       zIndex: 20,
-                      background: 'var(--bg-secondary)',
+                      background: 'var(--bg-surface)',
                       width: '260px',
                       minWidth: '260px',
                       padding: '12px 16px',
                       textAlign: 'left',
-                      borderBottom: '1px solid var(--border-primary)',
-                      borderRight: '1px solid var(--border-primary)',
+                      borderBottom: '1px solid var(--border)',
+                      borderRight: '1px solid var(--border)',
                       fontSize: '0.85rem',
                       fontWeight: 600,
                       color: 'var(--text-muted)',
@@ -189,10 +190,10 @@ export default function CalendarPage() {
                         minWidth: '38px',
                         padding: '8px 2px',
                         textAlign: 'center',
-                        borderBottom: '1px solid var(--border-primary)',
+                        borderBottom: '1px solid var(--border)',
                         borderRight: '1px solid rgba(255,255,255,0.04)',
                         background: d.isToday
-                          ? 'var(--accent-subtle)'
+                          ? 'var(--accent-quiet)'
                           : d.isWeekend
                             ? 'rgba(255,255,255,0.02)'
                             : 'transparent',
@@ -219,7 +220,7 @@ export default function CalendarPage() {
                     <tr
                       key={prop.id}
                       style={{
-                        borderBottom: '1px solid var(--border-primary)',
+                        borderBottom: '1px solid var(--border)',
                         height: '52px',
                       }}
                     >
@@ -231,7 +232,7 @@ export default function CalendarPage() {
                           zIndex: 5,
                           background: 'var(--bg-card)',
                           padding: '8px 12px',
-                          borderRight: '1px solid var(--border-primary)',
+                          borderRight: '1px solid var(--border)',
                           verticalAlign: 'middle',
                         }}
                       >
@@ -254,15 +255,15 @@ export default function CalendarPage() {
                                 width: '38px',
                                 height: '38px',
                                 borderRadius: '6px',
-                                background: 'var(--bg-glass)',
+                                background: 'var(--bg-card-hover)',
+                                color: 'var(--text-muted)',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                fontSize: '1.1rem',
                                 flexShrink: 0,
                               }}
                             >
-                              🏠
+                              <Icon name="home" size={18} />
                             </div>
                           )}
                           <div style={{ minWidth: 0, flex: 1 }}>
@@ -318,7 +319,7 @@ export default function CalendarPage() {
                               textAlign: 'center',
                               borderRight: '1px solid rgba(255,255,255,0.03)',
                               background: day.isToday
-                                ? 'var(--accent-subtle)'
+                                ? 'var(--accent-quiet)'
                                 : day.isWeekend
                                   ? 'rgba(255,255,255,0.015)'
                                   : 'transparent',
@@ -330,45 +331,58 @@ export default function CalendarPage() {
                                 onClick={() => setSelectedBooking(booking)}
                                 style={{
                                   height: '38px',
-                                  background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.4), rgba(79, 70, 229, 0.5))',
-                                  border: '1px solid rgba(129, 140, 248, 0.6)',
+                                  background: 'var(--accent-quiet)',
+                                  borderTop: '1px solid var(--accent-border)',
+                                  borderBottom: '1px solid var(--accent-border)',
+                                  borderLeft: isStart ? '2px solid var(--accent)' : 'none',
                                   borderRadius: isStart ? '6px 0 0 6px' : '0',
                                   cursor: 'pointer',
                                   display: 'flex',
                                   alignItems: 'center',
                                   justifyContent: 'flex-start',
-                                  padding: '0 4px',
+                                  gap: '4px',
+                                  padding: '0 6px',
                                   overflow: 'hidden',
                                   whiteSpace: 'nowrap',
                                   textOverflow: 'ellipsis',
                                   fontSize: '0.72rem',
                                   fontWeight: 600,
-                                  color: '#fff',
+                                  color: 'var(--accent-hover)',
                                 }}
                                 title={`${booking.guestName} (${booking.checkIn} — ${booking.checkOut})${booking.amount ? ` • ${booking.amount} ₽` : ''}`}
                               >
                                 {isStart && (
-                                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                    👤 {booking.guestName}
-                                  </span>
+                                  <>
+                                    <Icon name="user" size={13} style={{ color: 'var(--accent)' }} />
+                                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                      {booking.guestName}
+                                    </span>
+                                  </>
                                 )}
                               </div>
                             ) : closure ? (
                               <div
                                 style={{
                                   height: '38px',
-                                  background: 'rgba(239, 68, 68, 0.15)',
-                                  border: '1px dashed rgba(239, 68, 68, 0.4)',
+                                  background: 'var(--danger-quiet)',
+                                  border: '1px dashed var(--danger-border)',
                                   borderRadius: isClosureStart ? '6px 0 0 6px' : '0',
                                   display: 'flex',
                                   alignItems: 'center',
                                   justifyContent: 'center',
+                                  gap: '4px',
                                   fontSize: '0.7rem',
+                                  fontWeight: 600,
                                   color: 'var(--danger)',
                                 }}
                                 title={`Закрыто: ${closure.reason || 'Ремонт/Блокировка'}`}
                               >
-                                {isClosureStart && '🔒 Закрыто'}
+                                {isClosureStart && (
+                                  <>
+                                    <Icon name="lock" size={12} />
+                                    <span>Закрыто</span>
+                                  </>
+                                )}
                               </div>
                             ) : null}
                           </td>
@@ -404,15 +418,18 @@ export default function CalendarPage() {
             style={{
               maxWidth: '440px',
               width: '100%',
-              background: 'var(--bg-secondary)',
-              border: '1px solid var(--border-accent)',
+              background: 'var(--bg-surface)',
+              border: '1px solid var(--accent-border)',
             }}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
-              <h2>📋 Детали бронирования</h2>
-              <button onClick={() => setSelectedBooking(null)} className="btn btn-ghost btn-sm">
-                ✕
+              <h2 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Icon name="clipboard" size={20} style={{ color: 'var(--accent)' }} />
+                Детали бронирования
+              </h2>
+              <button onClick={() => setSelectedBooking(null)} className="icon-btn" aria-label="Закрыть">
+                <Icon name="x" size={18} />
               </button>
             </div>
 
