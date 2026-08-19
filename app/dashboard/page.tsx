@@ -27,7 +27,7 @@ export default function DashboardPage() {
       title: 'Telegram аккаунт',
       description: user?.tg_connected
         ? `Подключён${user.tg_username ? ` · @${user.tg_username}` : ''}`
-        : 'Подключите аккаунт, от имени которого агент будет общаться',
+        : 'Войдите по номеру телефона — агент будет писать гостям от вашего имени',
       connected: user?.tg_connected ?? false,
       href: '/settings/telegram',
       icon: 'message',
